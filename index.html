@@ -5,24 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday Salma!</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
+            min-height: 100vh;
+            background-color: #e0f2fe;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         .birthday-container {
-            background-color: #e0f2fe;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
+            min-height: 100vh;
+            width: 100%;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
 
         /* Styling Gift Box */
@@ -30,52 +33,58 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.5s ease;
+            z-index: 10;
         }
 
         .gift-box {
-            font-size: 120px;
+            font-size: clamp(80px, 15vw, 120px);
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: inline-block;
+            margin: 20px 0;
         }
 
         .gift-box:hover {
-            transform: scale(1.2) rotate(10deg);
+            transform: scale(1.1) rotate(5deg);
         }
 
         .text-ucapan {
             color: #fb7185;
             font-weight: bold;
-            font-size: clamp(1.5rem, 5vh, 3rem);
+            font-size: clamp(1rem, 4vw, 1.5rem);
             margin: 5px 0;
+            text-shadow: 1px 1px 0px white;
         }
 
         .click-text {
             color: #fb7185;
             margin-top: 20px;
             font-weight: bold;
+            font-size: 0.9rem;
             animation: pulse 1.5s infinite;
         }
 
         /* Styling Terminal */
         .terminal-box {
-            display: none; /* Sembunyi di awal */
-            background-color: rgba(255, 255, 255, 0.8);
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9);
             color: #374151;
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
             max-width: 500px;
-            min-height: 250px;
+            max-height: 80vh; /* Agar tidak melebihi layar HP */
+            overflow-y: auto; /* Bisa di-scroll jika pesan panjang */
             text-align: left;
             font-weight: bold;
             opacity: 0;
             transition: opacity 1s ease;
+            z-index: 20;
         }
 
         .cursor {
             display: inline-block;
-            width: 10px;
+            width: 8px;
             height: 1.2em;
             background-color: #000000;
             margin-left: 5px;
@@ -94,20 +103,20 @@
             50% { transform: scale(1.05); }
         }
 
-        /* Class untuk animasi keluar kado */
         .bounce-out {
             animation: bounce-out-anim 0.5s forwards;
         }
 
         @keyframes bounce-out-anim {
             0% { transform: scale(1); }
-            25% { transform: scale(1.2); }
             100% { transform: scale(0); opacity: 0; }
         }
 
         .line {
             margin-bottom: 12px;
-            line-height: 1.6;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            word-wrap: break-word;
         }
 
         .highlight {
@@ -115,45 +124,50 @@
             font-weight: bold;
         }
 
-        /* Kontainer untuk foto-foto di pinggir */
+        /* Kontainer untuk foto */
         .box-foto {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Agar tidak menghalangi klik pada kado */
+            pointer-events: none;
         }
 
         .box-foto img {
             position: absolute;
-            width: 180px; /* Sesuaikan ukuran foto */
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            width: 150px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             object-fit: cover;
+            opacity: 0.6; /* Sedikit transparan agar tidak mengganggu teks */
+            transition: opacity 0.3s;
         }
 
-        /* Posisi Foto di Kiri */
-        .foto-kiri-1 { top: 5%; left: 2%; }
-        .foto-kiri-2 { top: 35%; left: 2%; }
-        .foto-kiri-3 { bottom: 5%; left: 2%; }
+        /* Responsif Posisi Foto */
+        .foto-kiri-1 { top: 5%; left: 5%; transform: rotate(-5deg); }
+        .foto-kiri-2 { top: 40%; left: 2%; transform: rotate(10deg); }
+        .foto-kiri-3 { bottom: 5%; left: 5%; transform: rotate(-10deg); }
 
-        /* Posisi Foto di Kanan */
-        .foto-kanan-1 { top: 5%; right: 2%; }
-        .foto-kanan-2 { top: 35%; right: 2%; }
-        .foto-kanan-3 { bottom: 5%; right: 2%; }
+        .foto-kanan-1 { top: 5%; right: 5%; transform: rotate(5deg); }
+        .foto-kanan-2 { top: 40%; right: 2%; transform: rotate(-8deg); }
+        .foto-kanan-3 { bottom: 5%; right: 5%; transform: rotate(12deg); }
 
-        /* Responsif untuk HP agar foto tidak menabrak teks */
         @media (max-width: 768px) {
             .box-foto img {
-                width: 80px;
+                width: 70px; /* Perkecil foto di HP */
+                opacity: 0.4;
+            }
+            .terminal-box {
+                padding: 15px;
+                font-size: 0.85rem;
             }
         }
-
     </style>
 </head>
 <body>
 
 <div class="birthday-container">
-    <!-- Tampilan Kado -->
     <div id="giftSection" class="gift-section" onclick="openGift()">
         <p class="text-ucapan">HAPPY 20TH BIRTHDAY🎉❤️</p>
         <p class="text-ucapan">SALMA TSANIATUL MUNAWAROH🥰</p>
@@ -161,18 +175,18 @@
         <div class="gift-box">🎁</div>
         <p class="click-text">Ada kado untukmu, klik untuk buka! ❤️</p>
     </div>
-    <!-- Tampilan Terminal -->
+
     <div id="terminalBox" class="terminal-box">
         <div id="messageContainer"></div>
         <div id="typingLine" class="line" style="display: none;">
             <span id="currentText"></span><span class="cursor"></span>
         </div>
     </div>
+
     <div class="box-foto">
         <img src="image/img1.jpeg" class="foto-kiri-1" alt="foto1">
         <img src="image/img3.jpeg" class="foto-kiri-2" alt="foto2">
         <img src="image/img2.jpeg" class="foto-kiri-3" alt="foto3">
-
         <img src="image/img6.jpeg" class="foto-kanan-1" alt="foto4">
         <img src="image/img4.jpeg" class="foto-kanan-2" alt="foto5">
         <img src="image/img5.jpeg" class="foto-kanan-3" alt="foto6">
@@ -187,7 +201,9 @@
         "Aku cuma mau bilang...",
         "SELAMAT ULANG TAHUN SAYANGG! 🎂",
         "Semoga kamu selalu diberikan kesehatan dan selalu dilancarkan terus rezekinya SAYANG...❤️",
-        "Maaf kalo akuu selalu bikin kamuu marah dengan setiap pertanyaan akuu, dan maaf juga kalo akuu selalu memperlihatkan sifat cemburu akuu kemarin kemarin meskipun akuu gatau kamu sadar atau engga disetiap akuu memperlihatkan sipat cemburu akuu. Dan maaf juga kalo akuu selalu buat kamuu kecewa sayanggg, akuu janji bakal berubah jadi lebih baik lagi buat kedepannya, ayoo kita jalani ini bersama sama lagi yahhh sayang dan kalo ada apa apa jangan lupa ceritain ke akuu sayanggg karena akuu akan selalu ada buat kamuuu...❤️",
+        "Maaf kalo akuu selalu bikin kamuu marah, dan maaf juga kalo akuu cemburuan kemarin. Aku janji bakal berubah jadi lebih baik lagi buat kedepannya.",
+        "Dan aku tau pada beberapa hari kebelakang ini kamu lagi banyak masalah tapi itu bukan menjadi alasan kamu tidak bisa bahagia sayang. Justru itu bisa membuat kamu bisa menjadi lebih kuat...",
+        "Semangattt cantikkk, aku selalu bangga bisa berada disisi perempuan kuat seperti kamuu sayanggg...❤️",
         "Bahagia selalu sayanggg...❤️",
         "I WILL ALWAYS LOVE YOU SAYANG❤️",
     ];
@@ -198,13 +214,10 @@
         const giftSection = document.getElementById('giftSection');
         const terminalBox = document.getElementById('terminalBox');
 
-        // Animasi kado menghilang
         giftSection.classList.add('bounce-out');
-        
         await sleep(500);
         giftSection.style.display = 'none';
         
-        // Munculkan terminal
         terminalBox.style.display = 'block';
         setTimeout(() => {
             terminalBox.style.opacity = '1';
@@ -217,6 +230,7 @@
         const messageContainer = document.getElementById('messageContainer');
         const typingLine = document.getElementById('typingLine');
         const currentTextSpan = document.getElementById('currentText');
+        const terminalBox = document.getElementById('terminalBox');
 
         await sleep(800);
         typingLine.style.display = 'block';
@@ -227,20 +241,20 @@
             
             for (let j = 0; j < fullLine.length; j++) {
                 currentTextSpan.innerText += fullLine[j];
-                await sleep(70); 
+                await sleep(50); // Sedikit lebih cepat agar tidak bosan di HP
+                
+                // Auto scroll ke bawah saat ngetik
+                terminalBox.scrollTop = terminalBox.scrollHeight;
             }
             
-            // Pindahkan teks yang selesai diketik ke kontainer utama
             const newLine = document.createElement('div');
             newLine.className = 'line';
-            if (fullLine.includes('🎂')) {
-                newLine.classList.add('highlight');
-            }
+            if (fullLine.includes('🎂')) newLine.classList.add('highlight');
             newLine.innerText = fullLine;
             messageContainer.appendChild(newLine);
             
             currentTextSpan.innerText = "";
-            await sleep(500); 
+            await sleep(600); 
         }
         
         typingLine.style.display = 'none';
